@@ -20,18 +20,22 @@ def fetch_data(table_name, **kw) -> list[dict]:
         results = session.execute(stmt).scalars().all()
         return [r.to_dict() for r in results]
 
-def fetch_metadata(datatype, **params):
+def fetch_metadata(datatype, **params) -> dict[str,str] | dict[str,list[str]]:
     try:
         match datatype:
             case 'tables':
                 data = inspect.get_table_names(schema=params.get('schema'))
+                print(f"response is: {data}")
+                return {'tables':data}
             case 'columns':
-                raw_data = inspect.get_columns(schema=params.get('schema'), table_name=params['table'])
-                data = [c.get('name') for c in raw_data]
+                raw_data = inspect.get_columns(schema=params.get('schema'), table_name=params.get('table'))
+                data = {c.get('name'):c.get('type').python_type.__name__ for c in raw_data}
+                print(f"response for columns is: {data}")
+                return data
+            case _:
+                return {'error':'unsupported datatype'}
     except Exception:
-        data = {'error' : ['necessary data not provided']}
-    print(f"response is: {data}")
-    return {datatype:data}
+        return {'error' : 'necessary data not provided'}
 
 if __name__ == "__main__":
     pass

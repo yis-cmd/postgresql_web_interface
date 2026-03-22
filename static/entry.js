@@ -1,13 +1,29 @@
+function translateTypes(rawColumnSpecs) {
+    const types_tr = {
+        'str':'text',
+        'int':'number',
+        'float':'number',
+        'bool':'text'
+    }
+    const columnSpecs = {}
+    for (const [key, type] of Object.entries(rawColumnSpecs)) {
+        columnSpecs[key] = types_tr[type] || 'text'
+    }
+    return columnSpecs
+}
+
+/*get input in the form 
+{column_name:column_type}*/
 async function setColumnInputs(schema, table) {
     const rawColumnNames = await fetch(`http://127.0.0.1:6543/metadata/columns?schema=${schema}&table=${table}`);
-    const columnNames = await rawColumnNames.json().
-    then(res => Object.values(res)[0])
-    console.log(columnNames)
+    const rawColumnSpecs = await rawColumnNames.json()
+    const columnSpecs = translateTypes(rawColumnSpecs)
+    console.log(columnSpecs)
     const columnInputDiv = document.getElementById('enter-column-spec');
     columnInputDiv.innerHTML = ''
-    for (const column of columnNames) {
+    for (const [column, type] of Object.entries(columnSpecs)) {
         const columnInput = document.createElement('input');
-        columnInput.type = 'text'
+        columnInput.type = type
         columnInput.placeholder = column
         columnInput.name = column
         columnInputDiv.appendChild(columnInput)
@@ -19,11 +35,13 @@ async function setColumnInputs(schema, table) {
     columnInputDiv.appendChild(queryButton)
 }
 
+/*get input in the form 
+{'str' : list[table_name, table_name, ...]}*/
 async function setTableNameButtons(schema_name) {
+    const tableSelectionDiv = document.getElementById('select-table')
     const rawTableNames = await fetch(`http://127.0.0.1:6543/metadata/tables?schema=${schema_name}`)
     const tableNames = await rawTableNames.json().
     then(res => Object.values(res)[0])
-    const tableSelectionDiv = document.getElementById('select-table')
     if (tableNames.length === 0) {
         tableSelectionDiv.innerText = 'no tables in this schema yet'
     } else {
