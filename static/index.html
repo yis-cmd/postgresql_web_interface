@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selector</title>
+    <style>
+      .users-boxes {
+        border: 2px groove blue;
+      }
+      #select-box {
+        display: flex;
+        flex-direction: column;
+      }
+      #select-button {
+        height: 20px;
+        width: 20%;
+      }
+      .input-box {
+        height: 20px;
+        width: 20%;
+      }
+    </style>
+    <script src="/static/entry.js"></script>
+  </head>
+  <body>
+    <h1>Welcome</h1>
+    <form id="select-box">
+      <div id="select-table"></div>
+      <input
+        type="text"
+        placeholder="enter the name"
+        id="name-input"
+        class="input-box"
+      />
+      <button id="select-button" onclick="getData(event)">Confirm</button>
+    </form>
+    <div id="page">results</div>
+  </body>
+</html>
