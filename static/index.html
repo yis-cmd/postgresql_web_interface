@@ -21,19 +21,14 @@
         width: 20%;
       }
     </style>
-    <script src="/static/entry.js"></script>
+    <script src="/static/entry.js" defer></script>
   </head>
   <body>
     <h1>Welcome</h1>
     <form id="select-box">
-      <div id="select-table"></div>
-      <input
-        type="text"
-        placeholder="enter the name"
-        id="name-input"
-        class="input-box"
-      />
-      <button id="select-button" onclick="getData(event)">Confirm</button>
+      <div id="select-table">select table</div>
+      <div id="enter-column-spec">enter data by column</div>
+      <!-- <button id="select-button" onclick="getData(event)">Confirm</button> -->
     </form>
     <div id="page">results</div>
   </body>

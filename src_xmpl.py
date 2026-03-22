@@ -2,7 +2,6 @@ from bottle import get, run, static_file, request, response
 import os
 
 from data_fetcher import *
-from data_fetcher import fetch_metadata
 
 ABS_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -20,10 +19,11 @@ def static_files(filename):
 
 @get('/metadata/<datatype>')
 def metadata(datatype):
-    data = list(request.query.values())
-    return fetch_metadata(datatype, data)
+    print(f"request is: {request}")
+    params = dict(request.query)
+    return fetch_metadata(datatype, **params)
 
-@get('/<table>')
+@get('/data/<table>')
 def junction(table):
     model_class = TABLE_NAMES[table]
     attrs = dict(request.query)
