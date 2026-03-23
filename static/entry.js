@@ -12,6 +12,21 @@ function translateTypes(rawColumnSpecs) {
     return columnSpecs
 }
 
+function setGenericElement (elementType, elementText = null, elementID = null, elementClass = null) {
+    const newElement = document.createElement(elementType || 'p')
+    if (elementText) newElement.innerText = elementText
+    if (elementID) newElement.id = elementID
+    if (elementClass) newElement.className = elementClass
+    return newElement
+}
+
+function setUpButton (buttonClass, buttonType, buttonText, buttonID, buttonOnClick) {
+    const newButton = setGenericElement('button', buttonText, buttonID, buttonClass)
+    newButton.type = buttonType
+    newButton.addEventListener('click', buttonOnClick)
+    return newButton
+}
+
 /*get input in the form 
 {column_name:column_type}*/
 async function setColumnInputs(schema, table) {
@@ -28,10 +43,7 @@ async function setColumnInputs(schema, table) {
         columnInput.name = column
         columnInputDiv.appendChild(columnInput)
     }
-    const queryButton = document.createElement('button')
-    queryButton.type = 'button'
-    queryButton.addEventListener('click', () => getData(table))
-    queryButton.innerText = 'query'
+    const queryButton = setUpButton('query-button', 'button', 'query', null, () => getData(table))
     columnInputDiv.appendChild(queryButton)
 }
 
@@ -47,10 +59,7 @@ async function setTableNameButtons(schema_name) {
     } else {
         console.log(tableNames)
         for (const table of tableNames){
-            const tableButton = document.createElement('button')
-            tableButton.type = 'button'
-            tableButton.addEventListener('click', () => setColumnInputs(schema_name, table))
-            tableButton.innerText = table
+            const tableButton = setUpButton('table-names', 'button', table, null,  (() => setColumnInputs(schema_name, table)))
             tableSelectionDiv.appendChild(tableButton)
         }
     }
@@ -86,20 +95,15 @@ async function getData (table) {
 
     const list_of_results = Object.values(dict_of_results)[0]
     for (const item of list_of_results) {
-        const userBox = document.createElement('div');
-        userBox.className = "users-boxes"
-        Object.entries(item).forEach(
-            ([attrName, attrValue]) => {
-                const attrBox = document.createElement('div');
-                const attrNameBox = document.createElement('span');
-                const attrValueBox = document.createElement('span');
-                attrNameBox.innerText = `${attrName}: `;
-                attrValueBox.innerText = attrValue;
-                attrBox.append(attrNameBox, attrValueBox)
-                userBox.appendChild(attrBox)
-            }        
-        )
-        page.appendChild(userBox)
+        const resultBox = setGenericElement ('div',null, null, elementClass="results-boxes")
+        for (const [attrName, attrValue] of Object.entries(item)) {
+            const attrBox = setGenericElement ('div',null,null,'result-attr-box')
+            const attrNameBox = setGenericElement ('span', `${attrName}: `);
+            const attrValueBox = setGenericElement ('span', attrValue);
+            attrBox.append(attrNameBox, attrValueBox)
+            resultBox.appendChild(attrBox)
+        }        
+        page.appendChild(resultBox)
     }
 }
 
