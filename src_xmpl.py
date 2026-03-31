@@ -1,3 +1,4 @@
+from datetime import datetime
 from bottle import get, run, static_file, request, response
 import os
 
@@ -19,8 +20,9 @@ def static_files(filename):
 
 @get('/metadata/<datatype>')
 def metadata(datatype):
-    print(f"request is: {request}")
+    print(f"{datetime.now()}: request is: {request}")
     params = dict(request.query)
+    response.headers['Access-Control-Allow-Origin'] = '*'
     return fetch_metadata(datatype, **params)
 
 @get('/data/<table>')
@@ -33,8 +35,9 @@ def junction(table):
         return {"error message":[{'error: ' : "incompatible types"}]}
     results = fetch_data(model_class, **conv_attrs)
     response.content_type = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = '*'
     to_return = {f"{model_class}" :  results}
-    print(to_return)
+    print(f"{datetime.now()}: {to_return}")
     return to_return
 
 def conv_type(model_class, attr, value:str) -> object:
